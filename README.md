@@ -1,4 +1,7 @@
-<a href="https://codeclimate.com/github/AndrewGatenbyVS/snap-migrations/maintainability"><img src="https://api.codeclimate.com/v1/badges/9ab816d8a0eb723b916d/maintainability" /></a>
+![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/AndrewGatenbyVS/snap-migrations.svg)
+![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/AndrewGatenbyVS/snap-migrations.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/AndrewGatenbyVS/snap-migrations.svg)
+![PHP from Packagist](https://img.shields.io/packagist/php-v/andrewgatenby/snapmigrations.svg)
 
 # Snap Migrations (for Lumen)
 
@@ -11,7 +14,7 @@ this Trait.  Each subsequent Test run will then use the SQL dumped copy of the d
 Install the package via Composer:
 
 ```
-composer require --dev andrew-gatenby\snap-migrations
+composer require --dev andrewgatenby\snapmigrations
 ```
 
 ## Usage
