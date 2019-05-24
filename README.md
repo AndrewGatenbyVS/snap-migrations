@@ -42,6 +42,6 @@ If there is a new database migration created in `database/migrations` then Snap 
 If the Snap Migration gets stuck or out of sync, you can manually delete the file and it will be built afresh.
 
 ## Credit
-This package was inspired by the awesome looking [Snipe Migrations](drfraker/snipe-migrations) that I'd tried to make 
+This package was inspired by the awesome looking [Snipe Migrations](https://github.com/drfraker/snipe-migrations) that I'd tried to make 
 use of first, but needed a Lumen-friendly implementation. It also uses the excellent 
 [MySQL Dump](https://github.com/dg/MySQL-dump) package.
