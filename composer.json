@@ -1,8 +1,9 @@
 {
-    "name": "AndrewGatenby/SnapMigrations",
+    "name": "AndrewGatenbyVS/SnapMigrations",
     "description": "Stores an SQL dump of your migrated (and seeded) database to save time when running Integration and Acceptance Tests.",
     "type": "project",
     "require-dev": {
+        "php": "^7.2",
         "dg/mysql-dump": "^1.5",
         "laravel/lumen-framework": "5.7.*"
     },
