@@ -1,5 +1,5 @@
 {
-    "name": "AndrewGatenbyVS/SnapMigrations",
+    "name": "andrew-gatenby/snap-migrations",
     "description": "Stores an SQL dump of your migrated (and seeded) database to save time when running Integration and Acceptance Tests.",
     "type": "project",
     "require-dev": {
