@@ -1,4 +1,6 @@
-# Snap Migrations
+<a href="https://codeclimate.com/github/AndrewGatenbyVS/snap-migrations/maintainability"><img src="https://api.codeclimate.com/v1/badges/9ab816d8a0eb723b916d/maintainability" /></a>
+
+# Snap Migrations (for Lumen)
 
 This package is designed to be used within your TestCase class and allows for Lumen applications to create a static SQL 
 dump of a migrated (and seeded) database. It will automatically do this on the first Test run from a TestCase that uses 
