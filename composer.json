@@ -1,6 +1,18 @@
 {
     "name": "andrewgatenby/snapmigrations",
-    "description": "Stores an SQL dump of your migrated (and seeded) database to save time when running Integration and Acceptance Tests.",
+    "description": "Generates an SQL dump of your migrated (and seeded) database to save time re-running Migrations when running Integration and Acceptance Tests in a Lumen environment.",
+    "keywords": [
+        "lumen",
+        "laravel",
+        "phpunit",
+        "run faster tests",
+        "unit tests",
+        "integration tests",
+        "acceptance tests",
+        "speed up tests",
+        "fix slow tests",
+        "make tests faster"
+    ],
     "type": "project",
     "require": {
         "php": "^7.2",

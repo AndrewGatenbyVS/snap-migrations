@@ -1,6 +1,6 @@
-![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/AndrewGatenbyVS/snap-migrations.svg)
-![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/AndrewGatenbyVS/snap-migrations.svg)
-![GitHub last commit](https://img.shields.io/github/last-commit/AndrewGatenbyVS/snap-migrations.svg)
+[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/AndrewGatenbyVS/snap-migrations.svg)](https://codeclimate.com/github/AndrewGatenbyVS/snap-migrations)
+[![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/AndrewGatenbyVS/snap-migrations.svg)](https://codeclimate.com/github/AndrewGatenbyVS/snap-migrations)
+[![GitHub last commit](https://img.shields.io/github/last-commit/AndrewGatenbyVS/snap-migrations.svg)](https://github.com/AndrewGatenbyVS/snap-migrations/commits/master)
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/andrewgatenby/snapmigrations.svg)
 
 # Snap Migrations (for Lumen)
@@ -37,12 +37,38 @@ abstract class MyAmazingTestCase extends BaseTestCase
 ```
 
 The Snap Migration SQL dump itself will be stored in `storage/snap_migration.sql` by default, but this can be modified
-by use of an environment variable called `SNAP_MIGRATION_SQL_FILE`. Note that it would still be within `storage/` 
-currently.
+by use of an environment variable called `SNAP_MIGRATION_SQL_FILE`. Note that it would still be within `storage/`.
 
-If there is a new database migration created in `database/migrations` then Snap Migrations will generate a new snapshot.
+If there is a new database migration created in `database/migrations` then Snap Migrations will burst its own cached
+copy and generate a new snapshot.
 
 If the Snap Migration gets stuck or out of sync, you can manually delete the file and it will be built afresh.
+
+The `SnapMigrations` Trait has its own `setUp` method as the main entry point. If your Test classes have their own 
+`setUp` method, then you can alias the `SnapMigrations::setUp` method, similar to this:
+
+```php
+<?php
+
+namespace Tests;
+
+use AndrewGatenby\SnapMigrations\SnapMigrations;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+
+abstract class MyAmazingTestCase extends BaseTestCase
+{
+    use SnapMigrations {
+        setUp as setUpSnapMigrations;
+    }
+    
+    public function setUp()
+    {
+        // run setUp for Snap Migrations, which also calls parent::setUp()
+        $this->setUpSnapMigrations();
+        // my regular setUp tasks for MyAmazingTestCase
+    }
+}
+```
 
 ## Credit
 This package was inspired by the awesome looking [Snipe Migrations](https://github.com/drfraker/snipe-migrations) that I'd tried to make 
