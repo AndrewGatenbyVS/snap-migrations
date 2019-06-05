@@ -2,6 +2,7 @@
 [![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/AndrewGatenbyVS/snap-migrations.svg)](https://codeclimate.com/github/AndrewGatenbyVS/snap-migrations)
 [![GitHub last commit](https://img.shields.io/github/last-commit/AndrewGatenbyVS/snap-migrations.svg)](https://github.com/AndrewGatenbyVS/snap-migrations/commits/master)
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/andrewgatenby/snapmigrations.svg)
+![Packagist](https://img.shields.io/packagist/dd/AndrewGatenby/snapmigrations.svg?color=00cc00&style=flat)
 
 # Snap Migrations (for Lumen)
 
@@ -71,6 +72,5 @@ abstract class MyAmazingTestCase extends BaseTestCase
 ```
 
 ## Credit
-This package was inspired by the awesome looking [Snipe Migrations](https://github.com/drfraker/snipe-migrations) that I'd tried to make 
-use of first, but needed a Lumen-friendly implementation. It also uses the excellent 
+This package was inspired by the awesome looking [Snipe Migrations](https://github.com/drfraker/snipe-migrations) that I'd tried to make use of first, but needed a Lumen-friendly implementation. It also uses the excellent 
 [MySQL Dump](https://github.com/dg/MySQL-dump) package.
