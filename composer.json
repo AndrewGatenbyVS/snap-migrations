@@ -17,7 +17,7 @@
     "require": {
         "php": "^7.2",
         "dg/mysql-dump": "^1.5",
-        "laravel/lumen-framework": "^5.7.*"
+        "laravel/lumen-framework": "^5.7"
     },
     "autoload": {
         "psr-4": {
