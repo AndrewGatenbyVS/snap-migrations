@@ -67,7 +67,7 @@ trait SnapMigrations
     private function restoreSnapMigration(string $filename)
     {
         $mysqli = $this->makeMysqli(
-            $this->getDbField('host'),
+            $this->getHost(),
             $this->getDbField('username'),
             $this->getDbField('password'),
             $this->getDbField('database')
@@ -128,7 +128,7 @@ trait SnapMigrations
     private function makeSnapMigration(string $filename)
     {
         $mysqli = $this->makeMysqli(
-            $this->getDbField('host'),
+            $this->getHost(),
             $this->getDbField('username'),
             $this->getDbField('password'),
             $this->getDbField('database')
@@ -168,5 +168,15 @@ trait SnapMigrations
     {
         $connection = $this->getDatabaseConnection();
         return config("database.connections.{$connection}.{$field}");
+    }
+
+  /**
+   * Returns the database host
+   *
+   * @return mixed
+   */
+  protected function getHost()
+    {
+        return $this->getDbField('write.host') ?? $this->getDbField('host');
     }
 }
