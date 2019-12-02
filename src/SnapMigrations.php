@@ -6,6 +6,7 @@ use Exception;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use MySQLDump;
 use MySQLImport;
+use Illuminate\Support\Arr;
 
 trait SnapMigrations
 {
@@ -66,11 +67,13 @@ trait SnapMigrations
      */
     private function restoreSnapMigration(string $filename)
     {
+        $config = $this->getWriteConfig($this->getDatabaseConfig());
+
         $mysqli = $this->makeMysqli(
-            $this->getHost(),
-            $this->getDbField('username'),
-            $this->getDbField('password'),
-            $this->getDbField('database')
+            $config['host'],
+            $config['username'],
+            $config['password'],
+            $config['database']
         );
         $import = new MySQLImport($mysqli);
         $import->load($filename);
@@ -127,11 +130,13 @@ trait SnapMigrations
      */
     private function makeSnapMigration(string $filename)
     {
+      $config = $this->getWriteConfig($this->getDatabaseConfig());
+
         $mysqli = $this->makeMysqli(
-            $this->getHost(),
-            $this->getDbField('username'),
-            $this->getDbField('password'),
-            $this->getDbField('database')
+            $config['host'],
+            $config['username'],
+            $config['password'],
+            $config['database']
         );
         $dump = new MySQLDump($mysqli);
         $dump->save($filename);
@@ -161,22 +166,46 @@ trait SnapMigrations
     }
 
     /**
-     * @param string $field
      * @return mixed
      */
-    protected function getDbField(string $field)
+    protected function getDatabaseConfig()
     {
         $connection = $this->getDatabaseConnection();
-        return config("database.connections.{$connection}.{$field}");
+        return config("database.connections.{$connection}");
     }
 
-  /**
-   * Returns the database host
-   *
-   * @return mixed
-   */
-  protected function getHost()
+    /**
+     * Get the read configuration for a read / write connection.
+     *
+     * @param  array $config
+     * @return array
+     */
+    protected function getWriteConfig(array $config)
     {
-        return $this->getDbField('write.host') ?? $this->getDbField('host');
+        return $this->mergeReadWriteConfig($config, $this->getReadWriteConfig($config, 'write'));
+    }
+
+    /**
+     * Get a read / write level configuration.
+     *
+     * @param  array $config
+     * @param  string $type
+     * @return array
+     */
+    protected function getReadWriteConfig(array $config, $type)
+    {
+        return isset($config[$type][0]) ? Arr::random($config[$type]) : $config[$type];
+    }
+
+    /**
+     * Merge a configuration for a read / write connection.
+     *
+     * @param  array $config
+     * @param  array $merge
+     * @return array
+     */
+    protected function mergeReadWriteConfig(array $config, array $merge)
+    {
+        return Arr::except(array_merge($config, $merge), ['read', 'write']);
     }
 }
