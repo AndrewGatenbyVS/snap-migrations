@@ -3,10 +3,10 @@
 namespace AndrewGatenby\SnapMigrations;
 
 use Exception;
-use Laravel\Lumen\Testing\DatabaseMigrations;
+use Illuminate\Support\Arr;
 use MySQLDump;
 use MySQLImport;
-use Illuminate\Support\Arr;
+use RuntimeException;
 
 trait SnapMigrations
 {
@@ -18,15 +18,17 @@ trait SnapMigrations
 
     /**
      * @param bool $shouldRunSeeder Pass true to run db:seed as part of the Snap Migration being made
-     * @throws \Exception
+     *
+     * @throws RuntimeException
      */
     public function setUp(bool $shouldRunSeeder = false)
     {
-        $uses = array_flip(class_uses_recursive(static::class));
-
-        if (isset($uses[DatabaseMigrations::class])) {
-            throw new Exception('Remove DatabaseMigrations from your Test classes and use SnapMigrations instead');
+        if ($this->isUsingDatabaseMigrationsTrait()) {
+            throw new RuntimeException(
+                sprintf('Remove the DatabaseMigrations trait from %s and use SnapMigrations instead', get_class($this))
+            );
         }
+
         $this->shouldRunSeeder = $shouldRunSeeder;
 
         parent::setUp();
@@ -36,23 +38,24 @@ trait SnapMigrations
 
     /**
      * @param bool $shouldRunSeeder
+     *
      * @throws Exception
      */
     public function runDatabaseMigrations(bool $shouldRunSeeder)
     {
-        // generate our filename
+        // Generate our filename
         $this->setSnapMigrationFilename(storage_path(env('SNAP_MIGRATION_SQL_FILE', 'snap_migration.sql')));
 
-        /*
-         * In the case that the Snap Migration file doesn't exist or is outdated, we want to do a fresh migration and
-         * then take a fresh static snapshot of it. Potentially we may we seeding the database too, before we take the
-         * snapshot.
-         */
+        // In the case that the Snap Migration file doesn't exist or is outdated, we want to do a fresh migration and
+        // then take a fresh static snapshot of it. Potentially we may we seeding the database too, before we take the
+        // snapshot.
         if ($this->checkSnapMigrationFile($this->snapMigrationFilename) === false) {
             $this->artisan('migrate:fresh');
+
             if ($shouldRunSeeder === true) {
                 $this->artisan('db:seed');
             }
+
             $this->makeSnapMigration($this->snapMigrationFilename);
             return;
         }
@@ -63,6 +66,7 @@ trait SnapMigrations
 
     /**
      * @param string $filename
+     *
      * @throws Exception
      */
     private function restoreSnapMigration(string $filename)
@@ -75,12 +79,13 @@ trait SnapMigrations
             $config['password'],
             $config['database']
         );
-        $import = new MySQLImport($mysqli);
-        $import->load($filename);
+
+        (new MySQLImport($mysqli))->load($filename);
     }
 
     /**
      * @param string $filename
+     *
      * @return void
      */
     private function setSnapMigrationFilename(string $filename): void
@@ -90,18 +95,17 @@ trait SnapMigrations
 
     /**
      * @param string $filename
+     *
      * @return bool
      */
     private function checkSnapMigrationFile(string $filename)
     {
-        return (
-            $this->checkSnapMigrationFileExists($filename) &&
-            $this->checkSnapMigrationFileAge($filename)
-        );
+        return $this->checkSnapMigrationFileExists($filename) && $this->checkSnapMigrationFileAge($filename);
     }
 
     /**
      * @param string $filename
+     *
      * @return bool
      */
     private function checkSnapMigrationFileExists(string $filename): bool
@@ -111,26 +115,30 @@ trait SnapMigrations
 
     /**
      * @param string $filename
+     *
      * @return bool
      */
     private function checkSnapMigrationFileAge(string $filename): bool
     {
         $lastModifiedTime = filemtime($filename);
+
         foreach (glob('database/migrations/*.php') as $migrationFile) {
             if (filemtime($migrationFile) > $lastModifiedTime) {
                 return false;
             }
         }
+
         return true;
     }
 
     /**
      * @param string $filename
+     *
      * @throws Exception
      */
     private function makeSnapMigration(string $filename)
     {
-      $config = $this->getDatabaseConfig();
+        $config = $this->getDatabaseConfig();
 
         $mysqli = $this->makeMysqli(
             $config['host'],
@@ -138,8 +146,8 @@ trait SnapMigrations
             $config['password'],
             $config['database']
         );
-        $dump = new MySQLDump($mysqli);
-        $dump->save($filename);
+
+        (new MySQLDump($mysqli))->save($filename);
     }
 
     /**
@@ -147,7 +155,9 @@ trait SnapMigrations
      * @param string $username
      * @param string $password
      * @param string $dbName
+     *
      * @return \mysqli
+     *
      * @throws Exception
      */
     private function makeMysqli(string $host, string $username, string $password, string $dbName): \mysqli
@@ -171,19 +181,17 @@ trait SnapMigrations
     protected function getDatabaseConfig()
     {
         $connection = $this->getDatabaseConnection();
+
         $config = config("database.connections.{$connection}");
 
-        if (isset($config['read'])) {
-            $config = $this->getWriteConfig($config);
-        }
-
-        return $config;
+        return isset($config['read']) ? $this->getWriteConfig($config) : $config;
     }
 
     /**
      * Get the read configuration for a read / write connection.
      *
      * @param  array $config
+     *
      * @return array
      */
     protected function getWriteConfig(array $config)
@@ -200,7 +208,7 @@ trait SnapMigrations
      */
     protected function getReadWriteConfig(array $config, $type)
     {
-        return isset($config[$type][0]) ? Arr::random($config[$type]) : $config[$type];
+        return Arr::has($config, "{$type}.0") ? Arr::random($config[$type]) : $config[$type];
     }
 
     /**
@@ -213,5 +221,25 @@ trait SnapMigrations
     protected function mergeReadWriteConfig(array $config, array $merge)
     {
         return Arr::except(array_merge($config, $merge), ['read', 'write']);
+    }
+
+    /**
+     * Determine if the class is using the DatabaseMigrations trait from either Laravel or Lumen.
+     *
+     * @return bool
+     */
+    protected function isUsingDatabaseMigrationsTrait(): bool
+    {
+        $uses = array_flip(class_uses_recursive(static::class));
+
+        if (isset($uses['Illuminate\Foundation\Testing\DatabaseMigrations'])) {
+            return true;
+        }
+
+        if (isset($uses['Laravel\Lumen\Testing\DatabaseMigrations'])) {
+            return true;
+        }
+
+        return false;
     }
 }
