@@ -4,9 +4,9 @@
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/andrewgatenby/snapmigrations.svg)
 ![Packagist](https://img.shields.io/packagist/dd/AndrewGatenby/snapmigrations.svg?color=00cc00&style=flat)
 
-# Snap Migrations (for Lumen)
+# Snap Migrations (for Lumen & Laravel)
 
-This package is designed to be used within your TestCase class and allows for Lumen applications to create a static SQL 
+This package is designed to be used within your TestCase class and allows for Lumen & Laravel applications to create a static SQL 
 dump of a migrated (and seeded) database. It will automatically do this on the first Test run from a TestCase that uses 
 this Trait.  Each subsequent Test run will then use the SQL dumped copy of the database.
 
