@@ -15,7 +15,7 @@ this Trait.  Each subsequent Test run will then use the SQL dumped copy of the d
 Install the package via Composer:
 
 ```
-composer require --dev andrewgatenby\snapmigrations
+composer require --dev andrewgatenby/snapmigrations
 ```
 
 ## Usage
