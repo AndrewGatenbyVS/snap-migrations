@@ -57,7 +57,6 @@ trait SnapMigrations
             }
 
             $this->makeSnapMigration($this->snapMigrationFilename);
-            return;
         }
 
         // Happy that the Snap Migration file exists and is current, so we will restore from that static SQL file
