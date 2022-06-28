@@ -31,8 +31,6 @@ trait SnapMigrations
 
         $this->shouldRunSeeder = $shouldRunSeeder;
 
-        parent::setUp();
-
         $this->runDatabaseMigrations($this->shouldRunSeeder);
     }
 
